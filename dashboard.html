@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mein Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --glow: rgba(108,99,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 10% 20%, rgba(108,99,255,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(255,101,132,0.06) 0%, transparent 50%);
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ═══════════════════════════════════════
+     LOGIN SCREEN
+  ═══════════════════════════════════════ */
+  #login-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 20% 30%, rgba(108,99,255,0.12) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 70%, rgba(255,101,132,0.08) 0%, transparent 55%);
+  }
+
+  #login-screen.hidden {
+    animation: fadeOutScreen 0.4s ease forwards;
+    pointer-events: none;
+  }
+
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px 32px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.6s ease both;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(108,99,255,0.1);
+  }
+
+  .login-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    border-radius: 24px 24px 0 0;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .login-logo-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 20px rgba(108,99,255,0.5));
+  }
+
+  .login-logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .login-logo-text span { color: var(--accent); }
+
+  .login-welcome {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 32px;
+    margin-top: 6px;
+    letter-spacing: 0.03em;
+  }
+
+  /* Benutzer-Auswahl */
+  .user-select-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .user-select-label::before {
+    content: '';
+    width: 16px; height: 1px;
+    background: var(--accent);
+  }
+
+  .user-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .user-btn {
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    color: var(--text);
+  }
+
+  .user-btn:hover {
+    border-color: var(--accent);
+    background: rgba(108,99,255,0.1);
+    transform: translateY(-2px);
+  }
+
+  .user-btn.selected {
+    border-color: var(--accent);
+    background: rgba(108,99,255,0.15);
+    box-shadow: 0 0 20px var(--glow);
+  }
+
+  .user-avatar {
+    font-size: 1.8rem;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .user-name {
+    font-size: 0.72rem;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .pw-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pw-label::before {
+    content: '';
+    width: 16px; height: 1px;
+    background: var(--accent);
+  }
+
+  .pw-row {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .pw-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 44px 12px 14px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.1em;
+  }
+
+  .pw-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+  }
+
+  .pw-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .pw-toggle:hover { color: var(--text); }
+
+  .login-error {
+    font-size: 0.72rem;
+    color: var(--accent2);
+    text-align: center;
+    margin-bottom: 14px;
+    min-height: 18px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .login-error.show { opacity: 1; }
+
+  .login-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .login-btn:hover {
+    background: #7c75ff;
+    box-shadow: 0 6px 24px rgba(108,99,255,0.45);
+    transform: translateY(-1px);
+  }
+
+  .login-btn:active { transform: translateY(0); }
+
+  .login-hint {
+    text-align: center;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ═══════════════════════════════════════
+     DASHBOARD
+  ═══════════════════════════════════════ */
+  #dashboard {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  #dashboard.visible {
+    display: block;
+    animation: fadeInDash 0.5s ease 0.1s both;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.03em;
+  }
+  .logo span { color: var(--accent); }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .header-user-avatar { font-size: 1.1rem; }
+  .header-user-name { color: var(--text); }
+
+  .logout-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .logout-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent3);
+    box-shadow: 0 0 8px var(--accent3);
+    animation: pulse 2s infinite;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  @media (min-width: 600px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .links-card { grid-column: 1 / 3; }
+  }
+
+  @media (min-width: 960px) {
+    .wrapper { padding: 24px; }
+    .grid { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .clock-card { grid-column: 1; grid-row: 1; }
+    .weather-card { grid-column: 2; grid-row: 1; }
+    .links-card { grid-column: 3; grid-row: 1 / 3; }
+    .todo-card { grid-column: 1; grid-row: 2; }
+    .notes-card { grid-column: 2; grid-row: 2; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    animation: fadeUp 0.6s ease both;
+    width: 100%;
+  }
+
+  .card:hover { border-color: var(--accent); box-shadow: 0 8px 40px var(--glow); }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-label::before { content: ''; width: 16px; height: 1px; background: var(--accent); flex-shrink: 0; }
+
+  /* CLOCK */
+  #clock {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 12vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--text) 40%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  #date { margin-top: 8px; font-size: 0.82rem; color: var(--muted); }
+
+  /* WETTER */
+  .weather-main { display: flex; align-items: center; gap: 16px; }
+  .weather-icon { font-size: 2.8rem; filter: drop-shadow(0 0 12px rgba(255,200,50,0.4)); flex-shrink: 0; }
+  .weather-temp { font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 9vw, 3rem); font-weight: 800; letter-spacing: -0.04em; }
+  .weather-desc-text { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .weather-details { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .weather-detail { font-size: 0.68rem; color: var(--muted); }
+  .weather-detail span { color: var(--text); display: block; font-size: 0.78rem; }
+  .weather-city-input {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 9px 12px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem; width: 100%; margin-top: 12px; outline: none; transition: border-color 0.2s;
+  }
+  .weather-city-input:focus { border-color: var(--accent); }
+
+  /* LINKS */
+  .link-item {
+    display: flex; align-items: center; gap: 12px; padding: 11px 12px;
+    border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px;
+    cursor: pointer; transition: all 0.2s; text-decoration: none; color: var(--text); background: var(--surface2);
+  }
+  .link-item:hover { border-color: var(--accent); background: rgba(108,99,255,0.1); transform: translateX(4px); }
+  .link-favicon { width: 34px; height: 34px; border-radius: 8px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .link-info { flex: 1; min-width: 0; }
+  .link-name { font-size: 0.82rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .link-url { font-size: 0.67rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .add-link-form { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .add-link-form input {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 9px 12px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; outline: none; transition: border-color 0.2s; width: 100%;
+  }
+  .add-link-form input:focus { border-color: var(--accent); }
+
+  .btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 10px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em; width: 100%;
+  }
+  .btn:hover { background: #7c75ff; box-shadow: 0 4px 16px rgba(108,99,255,0.4); }
+  .btn-danger { background: transparent; color: var(--accent2); border: 1px solid var(--accent2); width: auto; padding: 5px 12px; }
+  .btn-danger:hover { background: rgba(255,101,132,0.1); box-shadow: none; }
+
+  /* TODO */
+  .todo-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .todo-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem; outline: none; transition: border-color 0.2s; min-width: 0;
+  }
+  .todo-input:focus { border-color: var(--accent); }
+  .todo-add-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 10px 16px; font-size: 1.1rem; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+  .todo-add-btn:hover { background: #7c75ff; }
+  .todo-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); animation: fadeIn 0.3s ease; }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .todo-check.done { background: var(--accent3); border-color: var(--accent3); }
+  .todo-check.done::after { content: '✓'; font-size: 0.72rem; color: #000; font-weight: 700; }
+  .todo-text { flex: 1; font-size: 0.82rem; transition: all 0.2s; cursor: pointer; word-break: break-word; }
+  .todo-text.done { text-decoration: line-through; color: var(--muted); }
+  .todo-del { font-size: 0.75rem; color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; flex-shrink: 0; transition: color 0.2s; }
+  .todo-del:hover { color: var(--accent2); }
+
+  /* NOTIZEN */
+  .notes-area {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem; line-height: 1.6; resize: none; outline: none; height: 160px; transition: border-color 0.2s;
+  }
+  .notes-area:focus { border-color: var(--accent); }
+  .notes-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .notes-saved { font-size: 0.65rem; color: var(--accent3); opacity: 0; transition: opacity 0.3s; }
+  .notes-saved.show { opacity: 1; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeInDash { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeOutScreen { from { opacity: 1; } to { opacity: 0; transform: scale(1.02); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="login-logo-icon">🏠</span>
+      <div class="login-logo-text">Mein<span>Dashboard</span></div>
+    </div>
+    <div class="login-welcome">Willkommen zurück! Wer bist du?</div>
+
+    <div class="user-select-label">Benutzer wählen</div>
+    <div class="user-grid" id="user-grid"></div>
+
+    <div class="pw-label">Passwort</div>
+    <div class="pw-row">
+      <input class="pw-input" type="password" id="pw-input" placeholder="Passwort eingeben..." />
+      <button class="pw-toggle" onclick="togglePw()" id="pw-toggle-btn">👁</button>
+    </div>
+
+    <div class="login-error" id="login-error">❌ Falsches Passwort</div>
+    <button class="login-btn" onclick="doLogin()">Einloggen →</button>
+
+    <div class="login-hint">
+      💡 Passwörter können im Code angepasst werden
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
+<div id="dashboard">
+  <div class="wrapper">
+    <header>
+      <div class="logo">Mein<span>Dashboard</span></div>
+      <div class="header-right">
+        <div class="header-user">
+          <span class="header-user-avatar" id="header-avatar"></span>
+          <span class="header-user-name" id="header-username"></span>
+          <div class="status-dot"></div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()">Abmelden</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card clock-card" style="animation-delay:0.1s">
+        <div class="card-label">Uhrzeit & Datum</div>
+        <div id="clock">00:00:00</div>
+        <div id="date">Lade...</div>
+      </div>
+
+      <div class="card weather-card" style="animation-delay:0.2s">
+        <div class="card-label">Wetter</div>
+        <div class="weather-main">
+          <div class="weather-icon" id="weather-icon">🌤️</div>
+          <div>
+            <div class="weather-temp" id="weather-temp">–°C</div>
+            <div class="weather-desc-text" id="weather-desc">Stadt eingeben</div>
+          </div>
+        </div>
+        <div class="weather-details">
+          <div class="weather-detail">Feuchtigkeit<span id="weather-hum">–</span></div>
+          <div class="weather-detail">Wind<span id="weather-wind">–</span></div>
+          <div class="weather-detail">Gefühlt<span id="weather-feel">–</span></div>
+          <div class="weather-detail">Min / Max<span id="weather-minmax">–</span></div>
+        </div>
+        <input class="weather-city-input" id="city-input" type="text" placeholder="Stadt eingeben → Enter" />
+      </div>
+
+      <div class="card todo-card" style="animation-delay:0.3s">
+        <div class="card-label">To-Do Liste</div>
+        <div class="todo-input-row">
+          <input class="todo-input" id="todo-input" type="text" placeholder="Neue Aufgabe..." />
+          <button class="todo-add-btn" onclick="addTodo()">+</button>
+        </div>
+        <div id="todo-list"></div>
+      </div>
+
+      <div class="card notes-card" style="animation-delay:0.4s">
+        <div class="card-label">Notizen</div>
+        <textarea class="notes-area" id="notes" placeholder="Schreib hier deine Notizen..."></textarea>
+        <div class="notes-footer">
+          <span class="notes-saved" id="notes-saved">✓ Gespeichert</span>
+          <button class="btn btn-danger" onclick="clearNotes()">Leeren</button>
+        </div>
+      </div>
+
+      <div class="card links-card" style="animation-delay:0.5s">
+        <div class="card-label">Lesezeichen</div>
+        <div id="links-list"></div>
+        <div class="add-link-form">
+          <input type="text" id="link-name" placeholder="Name (z.B. GitHub)" />
+          <input type="text" id="link-url" placeholder="URL (z.B. https://github.com)" />
+          <input type="text" id="link-emoji" placeholder="Emoji (z.B. 🐙)" />
+          <button class="btn" onclick="addLink()">+ Link hinzufügen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// BENUTZER KONFIGURATION
+// Hier kannst du Benutzer & Passwörter anpassen!
+// ═══════════════════════════════════════
+const USERS = [
+  { name: 'Maria',    avatar: '👩', password: 'mama123'    },
+  { name: 'Karlheinz', avatar: '👨', password: 'papa123' },
+  { name: 'Robert',   avatar: '🧒', password: 'kind123'  },
+];
+
+let selectedUser = null;
+
+// Benutzer-Buttons rendern
+function renderUserGrid() {
+  const grid = document.getElementById('user-grid');
+  grid.innerHTML = '';
+  USERS.forEach((u, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'user-btn';
+    btn.innerHTML = `<span class="user-avatar">${u.avatar}</span><span class="user-name">${u.name}</span>`;
+    btn.onclick = () => selectUser(i, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function selectUser(i, btn) {
+  selectedUser = i;
+  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('pw-input').focus();
+}
+
+function togglePw() {
+  const input = document.getElementById('pw-input');
+  const btn = document.getElementById('pw-toggle-btn');
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+  else { input.type = 'password'; btn.textContent = '👁'; }
+}
+
+function doLogin() {
+  const errorEl = document.getElementById('login-error');
+  errorEl.classList.remove('show');
+
+  if (selectedUser === null) {
+    errorEl.textContent = '👆 Bitte zuerst einen Benutzer wählen';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  const pw = document.getElementById('pw-input').value;
+  const user = USERS[selectedUser];
+
+  if (pw === user.password) {
+    // Login erfolgreich
+    document.getElementById('header-avatar').textContent = user.avatar;
+    document.getElementById('header-username').textContent = user.name;
+    sessionStorage.setItem('dashboard_user', user.name);
+
+    const loginScreen = document.getElementById('login-screen');
+    loginScreen.classList.add('hidden');
+    setTimeout(() => { loginScreen.style.display = 'none'; }, 400);
+
+    const dash = document.getElementById('dashboard');
+    dash.classList.add('visible');
+    initDashboard();
+  } else {
+    // Falsches Passwort
+    errorEl.textContent = '❌ Falsches Passwort';
+    errorEl.classList.add('show');
+    const box = document.querySelector('.login-box');
+    box.style.animation = 'shake 0.4s ease';
+    setTimeout(() => { box.style.animation = ''; }, 400);
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('dashboard_user');
+  selectedUser = null;
+  document.getElementById('pw-input').value = '';
+  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
+
+  document.getElementById('dashboard').classList.remove('visible');
+  document.getElementById('dashboard').style.display = 'none';
+  setTimeout(() => { document.getElementById('dashboard').style.display = ''; }, 10);
+
+  const loginScreen = document.getElementById('login-screen');
+  loginScreen.style.display = 'flex';
+  loginScreen.classList.remove('hidden');
+  loginScreen.style.opacity = '1';
+}
+
+// Enter-Taste im Passwortfeld
+document.addEventListener('DOMContentLoaded', () => {
+  renderUserGrid();
+  document.getElementById('pw-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  // Auto-Login wenn Session noch aktiv
+  const savedUser = sessionStorage.getItem('dashboard_user');
+  if (savedUser) {
+    const idx = USERS.findIndex(u => u.name === savedUser);
+    if (idx >= 0) {
+      document.getElementById('header-avatar').textContent = USERS[idx].avatar;
+      document.getElementById('header-username').textContent = USERS[idx].name;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').classList.add('visible');
+      initDashboard();
+    }
+  }
+});
+
+// ═══════════════════════════════════════
+// DASHBOARD INITIALISIERUNG
+// ═══════════════════════════════════════
+function initDashboard() {
+  updateClock();
+  const savedCity = localStorage.getItem('dashboard_city');
+  if (savedCity) { document.getElementById('city-input').value = savedCity; fetchWeather(savedCity); }
+  renderTodos();
+  const notesEl = document.getElementById('notes');
+  notesEl.value = localStorage.getItem('dashboard_notes') || '';
+  renderLinks();
+}
+
+// UHRZEIT
+function updateClock() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  document.getElementById('clock').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  document.getElementById('date').textContent = `${days[now.getDay()]}, ${now.getDate()}. ${months[now.getMonth()]} ${now.getFullYear()}`;
+  setTimeout(updateClock, 1000);
+}
+
+// WETTER
+const weatherIcons = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+const weatherDescs = {0:'Klarer Himmel',1:'Überwiegend klar',2:'Teilweise bewölkt',3:'Bedeckt',45:'Nebel',48:'Raureif',51:'Leichter Nieselregen',53:'Nieselregen',55:'Starker Nieselregen',61:'Leichter Regen',63:'Regen',65:'Starker Regen',71:'Leichter Schnee',73:'Schnee',75:'Starker Schnee',80:'Regenschauer',81:'Starke Schauer',82:'Heftige Schauer',95:'Gewitter',96:'Gewitter mit Hagel',99:'Starkes Gewitter'};
+
+async function fetchWeather(city) {
+  try {
+    document.getElementById('weather-desc').textContent = 'Lade...';
+    const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=de`);
+    const geoData = await geoRes.json();
+    if (!geoData.results?.length) { document.getElementById('weather-desc').textContent = 'Stadt nicht gefunden'; return; }
+    const { latitude, longitude, name } = geoData.results[0];
+    const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
+    const wData = await wRes.json();
+    const c = wData.current; const code = c.weather_code;
+    document.getElementById('weather-icon').textContent = weatherIcons[code] || '🌤️';
+    document.getElementById('weather-temp').textContent = `${Math.round(c.temperature_2m)}°C`;
+    document.getElementById('weather-desc').textContent = `${weatherDescs[code] || ''} · ${name}`;
+    document.getElementById('weather-hum').textContent = `${c.relative_humidity_2m}%`;
+    document.getElementById('weather-wind').textContent = `${Math.round(c.wind_speed_10m)} km/h`;
+    document.getElementById('weather-feel').textContent = `${Math.round(c.apparent_temperature)}°C`;
+    document.getElementById('weather-minmax').textContent = `${Math.round(wData.daily.temperature_2m_min[0])}° / ${Math.round(wData.daily.temperature_2m_max[0])}°`;
+    localStorage.setItem('dashboard_city', city);
+  } catch(e) { document.getElementById('weather-desc').textContent = 'Fehler beim Laden'; }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('city-input').addEventListener('keydown', e => { if (e.key === 'Enter') fetchWeather(e.target.value.trim()); });
+});
+
+// TODO
+let todos = JSON.parse(localStorage.getItem('dashboard_todos') || '[]');
+function saveTodos() { localStorage.setItem('dashboard_todos', JSON.stringify(todos)); }
+function renderTodos() {
+  const list = document.getElementById('todo-list'); list.innerHTML = '';
+  todos.forEach((t, i) => {
+    const el = document.createElement('div'); el.className = 'todo-item';
+    el.innerHTML = `<div class="todo-check ${t.done?'done':''}" onclick="toggleTodo(${i})"></div><div class="todo-text ${t.done?'done':''}" onclick="toggleTodo(${i})">${t.text}</div><span class="todo-del" onclick="deleteTodo(${i})">✕</span>`;
+    list.appendChild(el);
+  });
+}
+function addTodo() {
+  const input = document.getElementById('todo-input'); const text = input.value.trim();
+  if (!text) return; todos.unshift({text, done:false}); saveTodos(); renderTodos(); input.value='';
+}
+function toggleTodo(i) { todos[i].done=!todos[i].done; saveTodos(); renderTodos(); }
+function deleteTodo(i) { todos.splice(i,1); saveTodos(); renderTodos(); }
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('todo-input').addEventListener('keydown', e => { if (e.key==='Enter') addTodo(); });
+});
+
+// NOTIZEN
+function setupNotes() {
+  const notesEl = document.getElementById('notes');
+  const notesSaved = document.getElementById('notes-saved');
+  let noteTimer;
+  notesEl.addEventListener('input', () => {
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(() => {
+      localStorage.setItem('dashboard_notes', notesEl.value);
+      notesSaved.classList.add('show');
+      setTimeout(() => notesSaved.classList.remove('show'), 2000);
+    }, 600);
+  });
+}
+document.addEventListener('DOMContentLoaded', setupNotes);
+function clearNotes() { if (confirm('Notizen wirklich leeren?')) { document.getElementById('notes').value=''; localStorage.removeItem('dashboard_notes'); } }
+
+// LINKS
+let links = JSON.parse(localStorage.getItem('dashboard_links') || 'null') || [
+  {name:'GitHub', url:'https://github.com', emoji:'🐙'},
+  {name:'Cosmos Cloud', url:'https://cosmos-cloud.io', emoji:'🌌'},
+  {name:'YouTube', url:'https://youtube.com', emoji:'▶️'},
+];
+function saveLinks() { localStorage.setItem('dashboard_links', JSON.stringify(links)); }
+function renderLinks() {
+  const list = document.getElementById('links-list'); list.innerHTML='';
+  links.forEach((l,i) => {
+    const el = document.createElement('a'); el.className='link-item'; el.href=l.url; el.target='_blank'; el.rel='noopener';
+    el.innerHTML=`<div class="link-favicon">${l.emoji||'🔗'}</div><div class="link-info"><div class="link-name">${l.name}</div><div class="link-url">${l.url}</div></div><span class="todo-del" onclick="deleteLink(event,${i})">✕</span>`;
+    list.appendChild(el);
+  });
+}
+function addLink() {
+  const name=document.getElementById('link-name').value.trim();
+  const url=document.getElementById('link-url').value.trim();
+  const emoji=document.getElementById('link-emoji').value.trim();
+  if (!name||!url) return;
+  links.unshift({name, url:url.startsWith('http')?url:'https://'+url, emoji:emoji||'🔗'});
+  saveLinks(); renderLinks();
+  document.getElementById('link-name').value='';
+  document.getElementById('link-url').value='';
+  document.getElementById('link-emoji').value='';
+}
+function deleteLink(e,i) { e.preventDefault(); links.splice(i,1); saveLinks(); renderLinks(); }
+</script>
+</body>
+</html>
