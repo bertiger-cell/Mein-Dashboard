@@ -578,7 +578,10 @@
           <div class="weather-detail">Gefühlt<span id="weather-feel">–</span></div>
           <div class="weather-detail">Min / Max<span id="weather-minmax">–</span></div>
         </div>
-        <input class="weather-city-input" id="city-input" type="text" placeholder="Stadt eingeben → Enter" />
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <input class="weather-city-input" id="city-input" type="text" placeholder="Stadt eingeben..." style="margin-top:0;flex:1;" />
+          <button onclick="fetchWeather(document.getElementById('city-input').value.trim())" style="background:var(--accent);border:none;border-radius:8px;padding:9px 14px;color:#fff;font-size:1.1rem;cursor:pointer;flex-shrink:0;">🔍</button>
+        </div>
       </div>
 
       <div class="card todo-card" style="animation-delay:0.3s">
