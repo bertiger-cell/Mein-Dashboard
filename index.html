@@ -361,6 +361,8 @@
   @media (min-width: 600px) {
     .grid { grid-template-columns: 1fr 1fr; }
     .links-card { grid-column: 1 / 3; }
+    .calendar-card { grid-column: 1 / 3; }
+    .news-card { grid-column: 1 / 3; }
   }
 
   @media (min-width: 960px) {
@@ -368,10 +370,80 @@
     .grid { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
     .clock-card { grid-column: 1; grid-row: 1; }
     .weather-card { grid-column: 2; grid-row: 1; }
-    .links-card { grid-column: 3; grid-row: 1 / 3; }
-    .todo-card { grid-column: 1; grid-row: 2; }
-    .notes-card { grid-column: 2; grid-row: 2; }
+    .links-card { grid-column: 3; grid-row: 1 / 5; }
+    .news-card { grid-column: 1 / 3; grid-row: 2; }
+    .calendar-card { grid-column: 1 / 3; grid-row: 3; }
+    .todo-card { grid-column: 1; grid-row: 4; }
+    .notes-card { grid-column: 2; grid-row: 4; }
   }
+
+  /* NEWS */
+  .news-list { display: flex; flex-direction: column; gap: 8px; }
+  .news-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface2); text-decoration: none; color: var(--text);
+    transition: all 0.2s; cursor: pointer;
+  }
+  .news-item:hover { border-color: var(--accent); background: rgba(108,99,255,0.08); transform: translateX(3px); }
+  .news-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 5px; }
+  .news-content { flex: 1; min-width: 0; }
+  .news-title { font-size: 0.8rem; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
+  .news-meta { font-size: 0.65rem; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; }
+  .news-source { color: var(--accent); }
+  .news-loading { font-size: 0.75rem; color: var(--muted); padding: 12px 0; text-align: center; }
+  .news-refresh { background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 4px 10px; cursor: pointer; transition: all 0.2s; margin-left: auto; display: block; margin-top: 10px; }
+  .news-refresh:hover { border-color: var(--accent); color: var(--accent); }
+  .news-region-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .region-tab { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 0.65rem; cursor: pointer; transition: all 0.2s; color: var(--muted); }
+  .region-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .region-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* KALENDER */
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .cal-month { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; }
+  .cal-nav { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 5px 12px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+  .cal-nav:hover { border-color: var(--accent); color: var(--accent); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 14px; }
+  .cal-day-name { text-align: center; font-size: 0.6rem; color: var(--muted); padding: 4px 0; text-transform: uppercase; letter-spacing: 0.05em; }
+  .cal-day { text-align: center; padding: 5px 2px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; min-height: 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+  .cal-day:hover { background: var(--surface2); border-color: var(--border); }
+  .cal-day.today { background: rgba(108,99,255,0.15); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .cal-day.other-month { color: var(--muted); opacity: 0.35; cursor: default; }
+  .cal-day.has-event::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent3); display: block; }
+  .cal-day.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .cal-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 599px) { .cal-bottom { grid-template-columns: 1fr; } }
+
+  .events-section-title { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .events-section-title::before { content: ''; width: 12px; height: 1px; background: var(--accent3); }
+
+  .event-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; animation: fadeIn 0.3s ease; }
+  .event-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .event-title { font-size: 0.8rem; font-weight: 500; flex: 1; }
+  .event-date-label { font-size: 0.65rem; color: var(--accent); white-space: nowrap; flex-shrink: 0; }
+  .event-desc { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+  .vote-btns { display: flex; gap: 6px; margin-top: 8px; }
+  .vote-btn { flex: 1; padding: 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; }
+  .vote-btn.vote-yes:hover { border-color: var(--accent3); color: var(--accent3); background: rgba(67,233,123,0.1); }
+  .vote-btn.vote-no:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(255,101,132,0.1); }
+  .vote-btn.active-yes { border-color: var(--accent3); color: var(--accent3); background: rgba(67,233,123,0.1); }
+  .vote-btn.active-no { border-color: var(--accent2); color: var(--accent2); background: rgba(255,101,132,0.1); }
+  .vote-summary { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .vote-chip { font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; }
+  .vote-chip.yes { background: rgba(67,233,123,0.1); color: var(--accent3); border: 1px solid rgba(67,233,123,0.3); }
+  .vote-chip.no { background: rgba(255,101,132,0.1); color: var(--accent2); border: 1px solid rgba(255,101,132,0.3); }
+  .event-del { font-size: 0.7rem; color: var(--muted); cursor: pointer; padding: 2px 6px; transition: color 0.2s; flex-shrink: 0; }
+  .event-del:hover { color: var(--accent2); }
+
+  .new-event-form { background: var(--surface2); border: 1px solid var(--accent); border-radius: 12px; padding: 14px; margin-bottom: 10px; animation: fadeUp 0.3s ease; }
+  .new-event-form input, .new-event-form textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; outline: none; margin-bottom: 8px; transition: border-color 0.2s; resize: none; }
+  .new-event-form input:focus, .new-event-form textarea:focus { border-color: var(--accent); }
+  .form-row { display: flex; gap: 8px; }
+  .add-event-btn { background: transparent; border: 1px dashed var(--border); border-radius: 10px; padding: 8px; width: 100%; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; margin-top: 2px; }
+  .add-event-btn:hover { border-color: var(--accent); color: var(--accent); }
+
 
   .card {
     background: var(--surface);
@@ -425,13 +497,43 @@
   #date { margin-top: 8px; font-size: 0.82rem; color: var(--muted); }
 
   /* WETTER */
-  .weather-main { display: flex; align-items: center; gap: 16px; }
+  .weather-today { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
   .weather-icon { font-size: 2.8rem; filter: drop-shadow(0 0 12px rgba(255,200,50,0.4)); flex-shrink: 0; }
+  .weather-today-info {}
   .weather-temp { font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 9vw, 3rem); font-weight: 800; letter-spacing: -0.04em; }
   .weather-desc-text { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
-  .weather-details { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .weather-detail { font-size: 0.68rem; color: var(--muted); }
-  .weather-detail span { color: var(--text); display: block; font-size: 0.78rem; }
+
+  /* 5-Tage Streifen */
+  .forecast-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .forecast-day {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px 4px; text-align: center; cursor: pointer; transition: all 0.2s;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+  }
+  .forecast-day:hover { border-color: var(--accent); background: rgba(108,99,255,0.1); transform: translateY(-2px); }
+  .forecast-day:first-child { border-color: var(--accent); background: rgba(108,99,255,0.08); }
+  .forecast-day-name { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .forecast-day-icon { font-size: 1.4rem; }
+  .forecast-day-max { font-size: 0.78rem; font-weight: 700; color: var(--text); }
+  .forecast-day-min { font-size: 0.65rem; color: var(--muted); }
+
+  /* Modal Detail */
+  .modal-day-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .modal-day-icon { font-size: 3rem; }
+  .modal-day-temp { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; }
+  .modal-day-desc { font-size: 0.8rem; color: var(--muted); }
+  .modal-day-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .modal-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .modal-detail { background: var(--surface2); border-radius: 10px; padding: 10px 12px; }
+  .modal-detail-label { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .modal-detail-value { font-size: 0.88rem; font-weight: 500; }
+  .modal-hourly { margin-top: 4px; }
+  .modal-hourly-title { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .hourly-strip { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; }
+  .hourly-item { flex-shrink: 0; background: var(--surface2); border-radius: 8px; padding: 6px 10px; text-align: center; min-width: 50px; }
+  .hourly-time { font-size: 0.6rem; color: var(--muted); margin-bottom: 3px; }
+  .hourly-icon { font-size: 1rem; }
+  .hourly-temp { font-size: 0.72rem; font-weight: 600; margin-top: 2px; }
   .weather-city-input {
     background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
     padding: 9px 12px; color: var(--text); font-family: 'JetBrains Mono', monospace;
@@ -564,27 +666,81 @@
       </div>
 
       <div class="card weather-card" style="animation-delay:0.2s">
-        <div class="card-label">Wetter</div>
-        <div class="weather-main">
+        <div class="card-label">Wetter – 5 Tage</div>
+        <!-- Heute -->
+        <div class="weather-today">
           <div class="weather-icon" id="weather-icon">🌤️</div>
-          <div>
+          <div class="weather-today-info">
             <div class="weather-temp" id="weather-temp">–°C</div>
             <div class="weather-desc-text" id="weather-desc">Stadt eingeben</div>
           </div>
         </div>
-        <div class="weather-details">
-          <div class="weather-detail">Feuchtigkeit<span id="weather-hum">–</span></div>
-          <div class="weather-detail">Wind<span id="weather-wind">–</span></div>
-          <div class="weather-detail">Gefühlt<span id="weather-feel">–</span></div>
-          <div class="weather-detail">Min / Max<span id="weather-minmax">–</span></div>
-        </div>
+        <!-- 5-Tage Streifen -->
+        <div class="forecast-strip" id="forecast-strip"></div>
+        <!-- Suche -->
         <div style="display:flex;gap:8px;margin-top:12px;">
           <input class="weather-city-input" id="city-input" type="text" placeholder="Stadt eingeben..." style="margin-top:0;flex:1;" />
           <button onclick="fetchWeather(document.getElementById('city-input').value.trim())" style="background:var(--accent);border:none;border-radius:8px;padding:9px 14px;color:#fff;font-size:1.1rem;cursor:pointer;flex-shrink:0;">🔍</button>
         </div>
       </div>
 
-      <div class="card todo-card" style="animation-delay:0.3s">
+      <!-- WETTER DETAIL MODAL -->
+      <div id="weather-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;">
+        <div style="background:var(--surface);border:1px solid var(--accent);border-radius:20px;padding:24px;max-width:420px;width:100%;position:relative;max-height:85vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6);">
+          <button onclick="closeWeatherModal()" style="position:absolute;top:14px;right:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);padding:4px 10px;cursor:pointer;font-size:0.8rem;">✕</button>
+          <div id="modal-content"></div>
+        </div>
+      </div>
+
+      <!-- NEWS -->
+      <div class="card news-card" style="animation-delay:0.25s">
+        <div class="card-label">Lokale Nachrichten</div>
+        <div class="news-region-tabs">
+          <div class="region-tab active" onclick="switchRegion('arnsberg', this)">Arnsberg</div>
+          <div class="region-tab" onclick="switchRegion('sundern', this)">Sundern</div>
+          <div class="region-tab" onclick="switchRegion('sauerland', this)">Sauerland</div>
+          <div class="region-tab" onclick="switchRegion('nrw', this)">NRW</div>
+        </div>
+        <div class="news-list" id="news-list">
+          <div class="news-loading">⏳ Nachrichten werden geladen...</div>
+        </div>
+        <button class="news-refresh" onclick="loadNews(currentRegion)">↺ Aktualisieren</button>
+      </div>
+
+      <!-- KALENDER -->
+      <div class="card calendar-card" style="animation-delay:0.3s">
+        <div class="card-label">Familienkalender</div>
+        <div class="cal-header">
+          <button class="cal-nav" onclick="calPrev()">‹</button>
+          <div class="cal-month" id="cal-month-label"></div>
+          <button class="cal-nav" onclick="calNext()">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-bottom">
+          <div>
+            <div class="events-section-title">Termine</div>
+            <div id="events-list"></div>
+            <button class="add-event-btn" onclick="toggleNewEventForm()">+ Neuen Termin hinzufügen</button>
+          </div>
+          <div>
+            <div class="events-section-title">Neuer Termin</div>
+            <div id="new-event-form" style="display:none">
+              <div class="new-event-form">
+                <input type="text" id="ev-title" placeholder="Titel (z.B. Arzttermin)" />
+                <input type="date" id="ev-date" />
+                <input type="text" id="ev-desc" placeholder="Beschreibung (optional)" />
+                <div class="form-row">
+                  <button class="btn" style="font-size:0.72rem;padding:8px" onclick="saveEvent()">✓ Speichern</button>
+                  <button class="btn btn-danger" style="width:auto;padding:8px 12px" onclick="toggleNewEventForm()">✕</button>
+                </div>
+              </div>
+            </div>
+            <div id="selected-day-info" style="font-size:0.72rem;color:var(--muted);padding:8px 0;">← Tag im Kalender antippen</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card todo-card" style="animation-delay:0.4s">
         <div class="card-label">To-Do Liste</div>
         <div class="todo-input-row">
           <input class="todo-input" id="todo-input" type="text" placeholder="Neue Aufgabe..." />
@@ -742,6 +898,8 @@ function initDashboard() {
   const notesEl = document.getElementById('notes');
   notesEl.value = localStorage.getItem('dashboard_notes') || '';
   renderLinks();
+  renderCal();
+  loadNews('arnsberg');
 }
 
 // UHRZEIT
@@ -758,28 +916,137 @@ function updateClock() {
 // WETTER
 const weatherIcons = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
 const weatherDescs = {0:'Klarer Himmel',1:'Überwiegend klar',2:'Teilweise bewölkt',3:'Bedeckt',45:'Nebel',48:'Raureif',51:'Leichter Nieselregen',53:'Nieselregen',55:'Starker Nieselregen',61:'Leichter Regen',63:'Regen',65:'Starker Regen',71:'Leichter Schnee',73:'Schnee',75:'Starker Schnee',80:'Regenschauer',81:'Starke Schauer',82:'Heftige Schauer',95:'Gewitter',96:'Gewitter mit Hagel',99:'Starkes Gewitter'};
+const dayNames = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+const dayNamesFull = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const monthNames = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+let weatherData = null;
 
 async function fetchWeather(city) {
   try {
     document.getElementById('weather-desc').textContent = 'Lade...';
+    document.getElementById('forecast-strip').innerHTML = '';
     const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=de`);
     const geoData = await geoRes.json();
     if (!geoData.results?.length) { document.getElementById('weather-desc').textContent = 'Stadt nicht gefunden'; return; }
     const { latitude, longitude, name } = geoData.results[0];
-    const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
-    const wData = await wRes.json();
-    const c = wData.current; const code = c.weather_code;
+
+    const wRes = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
+      `&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,weather_code,precipitation,uv_index` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,uv_index_max,sunrise,sunset,precipitation_probability_max` +
+      `&hourly=temperature_2m,weather_code,precipitation_probability` +
+      `&forecast_days=6&timezone=auto`
+    );
+    weatherData = await wRes.json();
+    weatherData.cityName = name;
+
+    const c = weatherData.current;
+    const code = c.weather_code;
     document.getElementById('weather-icon').textContent = weatherIcons[code] || '🌤️';
     document.getElementById('weather-temp').textContent = `${Math.round(c.temperature_2m)}°C`;
     document.getElementById('weather-desc').textContent = `${weatherDescs[code] || ''} · ${name}`;
-    document.getElementById('weather-hum').textContent = `${c.relative_humidity_2m}%`;
-    document.getElementById('weather-wind').textContent = `${Math.round(c.wind_speed_10m)} km/h`;
-    document.getElementById('weather-feel').textContent = `${Math.round(c.apparent_temperature)}°C`;
-    document.getElementById('weather-minmax').textContent = `${Math.round(wData.daily.temperature_2m_min[0])}° / ${Math.round(wData.daily.temperature_2m_max[0])}°`;
+
+    // 5-Tage Streifen rendern
+    const strip = document.getElementById('forecast-strip');
+    strip.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+      const date = new Date(weatherData.daily.time[i]);
+      const dayName = i === 0 ? 'Heute' : dayNames[date.getDay()];
+      const el = document.createElement('div');
+      el.className = 'forecast-day';
+      el.innerHTML = `
+        <div class="forecast-day-name">${dayName}</div>
+        <div class="forecast-day-icon">${weatherIcons[weatherData.daily.weather_code[i]] || '🌤️'}</div>
+        <div class="forecast-day-max">${Math.round(weatherData.daily.temperature_2m_max[i])}°</div>
+        <div class="forecast-day-min">${Math.round(weatherData.daily.temperature_2m_min[i])}°</div>
+      `;
+      el.onclick = () => openWeatherModal(i);
+      strip.appendChild(el);
+    }
     localStorage.setItem('dashboard_city', city);
   } catch(e) { document.getElementById('weather-desc').textContent = 'Fehler beim Laden'; }
 }
+
+function openWeatherModal(dayIndex) {
+  if (!weatherData) return;
+  const modal = document.getElementById('weather-modal');
+  const content = document.getElementById('modal-content');
+  modal.style.display = 'flex';
+
+  const d = weatherData.daily;
+  const date = new Date(d.time[dayIndex]);
+  const isToday = dayIndex === 0;
+  const c = weatherData.current;
+  const code = d.weather_code[dayIndex];
+
+  // Stunden für diesen Tag filtern
+  const dateStr = d.time[dayIndex];
+  const hourlyIndices = weatherData.hourly.time
+    .map((t, i) => t.startsWith(dateStr) ? i : -1)
+    .filter(i => i >= 0);
+
+  // Windrichtung in Text
+  const windDeg = isToday ? c.wind_direction_10m : 0;
+  const dirs = ['N','NO','O','SO','S','SW','W','NW'];
+  const windDir = dirs[Math.round(windDeg / 45) % 8];
+
+  const sunrise = d.sunrise[dayIndex] ? new Date(d.sunrise[dayIndex]).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}) : '–';
+  const sunset = d.sunset[dayIndex] ? new Date(d.sunset[dayIndex]).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}) : '–';
+
+  const hourlyHTML = hourlyIndices.length ? `
+    <div class="modal-hourly">
+      <div class="modal-hourly-title">Stündliche Vorhersage</div>
+      <div class="hourly-strip">
+        ${hourlyIndices.filter((_,i) => i % 2 === 0).map(i => {
+          const time = weatherData.hourly.time[i].split('T')[1].slice(0,5);
+          const temp = Math.round(weatherData.hourly.temperature_2m[i]);
+          const icon = weatherIcons[weatherData.hourly.weather_code[i]] || '🌤️';
+          const rain = weatherData.hourly.precipitation_probability[i];
+          return `<div class="hourly-item">
+            <div class="hourly-time">${time}</div>
+            <div class="hourly-icon">${icon}</div>
+            <div class="hourly-temp">${temp}°</div>
+            ${rain > 20 ? `<div style="font-size:0.58rem;color:#6cb4ff">💧${rain}%</div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>` : '';
+
+  content.innerHTML = `
+    <div class="modal-day-name">${isToday ? 'Heute' : dayNamesFull[date.getDay()]}, ${date.getDate()}. ${monthNames[date.getMonth()]}</div>
+    <div class="modal-day-header">
+      <div class="modal-day-icon">${weatherIcons[code] || '🌤️'}</div>
+      <div>
+        <div class="modal-day-temp">${Math.round(d.temperature_2m_max[dayIndex])}° / ${Math.round(d.temperature_2m_min[dayIndex])}°</div>
+        <div class="modal-day-desc">${weatherDescs[code] || ''} · ${weatherData.cityName}</div>
+      </div>
+    </div>
+    <div class="modal-details-grid">
+      <div class="modal-detail"><div class="modal-detail-label">💧 Regen-Chance</div><div class="modal-detail-value">${d.precipitation_probability_max[dayIndex] ?? '–'}%</div></div>
+      <div class="modal-detail"><div class="modal-detail-label">🌧️ Niederschlag</div><div class="modal-detail-value">${d.precipitation_sum[dayIndex]} mm</div></div>
+      <div class="modal-detail"><div class="modal-detail-label">💨 Wind max.</div><div class="modal-detail-value">${Math.round(d.wind_speed_10m_max[dayIndex])} km/h</div></div>
+      <div class="modal-detail"><div class="modal-detail-label">🌞 UV-Index</div><div class="modal-detail-value">${d.uv_index_max[dayIndex]}</div></div>
+      <div class="modal-detail"><div class="modal-detail-label">🌅 Sonnenaufgang</div><div class="modal-detail-value">${sunrise}</div></div>
+      <div class="modal-detail"><div class="modal-detail-label">🌇 Sonnenuntergang</div><div class="modal-detail-value">${sunset}</div></div>
+      ${isToday ? `
+      <div class="modal-detail"><div class="modal-detail-label">💦 Feuchtigkeit</div><div class="modal-detail-value">${c.relative_humidity_2m}%</div></div>
+      <div class="modal-detail"><div class="modal-detail-label">🌡️ Gefühlt</div><div class="modal-detail-value">${Math.round(c.apparent_temperature)}°C</div></div>
+      ` : ''}
+    </div>
+    ${hourlyHTML}
+  `;
+}
+
+function closeWeatherModal() {
+  document.getElementById('weather-modal').style.display = 'none';
+}
+
+// Modal schließen bei Klick außerhalb
 document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('weather-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeWeatherModal();
+  });
   document.getElementById('city-input').addEventListener('keydown', e => { if (e.key === 'Enter') fetchWeather(e.target.value.trim()); });
 });
 
@@ -848,6 +1115,256 @@ function addLink() {
   document.getElementById('link-emoji').value='';
 }
 function deleteLink(e,i) { e.preventDefault(); links.splice(i,1); saveLinks(); renderLinks(); }
+
+// ═══════════════════════════════════════
+// KALENDER
+// ═══════════════════════════════════════
+let calDate = new Date();
+let calSelectedDate = null;
+let events = JSON.parse(localStorage.getItem('dashboard_events') || '[]');
+
+function saveEvents() { localStorage.setItem('dashboard_events', JSON.stringify(events)); }
+
+function calPrev() { calDate.setMonth(calDate.getMonth() - 1); renderCal(); }
+function calNext() { calDate.setMonth(calDate.getMonth() + 1); renderCal(); }
+
+function renderCal() {
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  document.getElementById('cal-month-label').textContent = `${months[calDate.getMonth()]} ${calDate.getFullYear()}`;
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  // Wochentag-Köpfe
+  ['Mo','Di','Mi','Do','Fr','Sa','So'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-day-name';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const year = calDate.getFullYear();
+  const month = calDate.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const today = new Date();
+
+  // Starttag (Montag = 0)
+  let startDow = firstDay.getDay() - 1;
+  if (startDow < 0) startDow = 6;
+
+  // Vormonat-Tage
+  for (let i = startDow - 1; i >= 0; i--) {
+    const d = new Date(year, month, -i);
+    const el = document.createElement('div');
+    el.className = 'cal-day other-month';
+    el.textContent = d.getDate();
+    grid.appendChild(el);
+  }
+
+  // Aktuelle Monatstage
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    el.textContent = d;
+
+    const thisDate = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+
+    if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear())
+      el.classList.add('today');
+    if (calSelectedDate === thisDate)
+      el.classList.add('selected');
+    if (events.some(e => e.date === thisDate))
+      el.classList.add('has-event');
+
+    el.onclick = () => selectDay(thisDate);
+    grid.appendChild(el);
+  }
+
+  // Nächster Monat auffüllen
+  const filled = startDow + lastDay.getDate();
+  const remaining = filled % 7 === 0 ? 0 : 7 - (filled % 7);
+  for (let d = 1; d <= remaining; d++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day other-month';
+    el.textContent = d;
+    grid.appendChild(el);
+  }
+
+  renderEventsList();
+}
+
+function selectDay(dateStr) {
+  calSelectedDate = dateStr;
+  const parts = dateStr.split('-');
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  document.getElementById('selected-day-info').textContent =
+    `Ausgewählt: ${parseInt(parts[2])}. ${months[parseInt(parts[1])-1]} ${parts[0]}`;
+  document.getElementById('ev-date').value = dateStr;
+  renderCal();
+}
+
+function renderEventsList() {
+  const list = document.getElementById('events-list');
+  list.innerHTML = '';
+  const sorted = [...events].sort((a,b) => a.date.localeCompare(b.date));
+  if (sorted.length === 0) {
+    list.innerHTML = '<div style="font-size:0.72rem;color:var(--muted);padding:6px 0;">Noch keine Termine</div>';
+    return;
+  }
+  sorted.forEach((ev, i) => {
+    const parts = ev.date.split('-');
+    const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+    const dateLabel = `${parseInt(parts[2])}. ${months[parseInt(parts[1])-1]}`;
+    const currentUser = sessionStorage.getItem('dashboard_user') || '';
+    const myVote = ev.votes ? ev.votes[currentUser] : null;
+    const yesCount = ev.votes ? Object.values(ev.votes).filter(v=>v==='yes').length : 0;
+    const noCount = ev.votes ? Object.values(ev.votes).filter(v=>v==='no').length : 0;
+
+    const el = document.createElement('div');
+    el.className = 'event-item';
+    el.innerHTML = `
+      <div class="event-header">
+        <div class="event-title">${ev.title}</div>
+        <div class="event-date-label">${dateLabel}</div>
+        <span class="event-del" onclick="deleteEvent(${i})">✕</span>
+      </div>
+      ${ev.desc ? `<div class="event-desc">${ev.desc}</div>` : ''}
+      <div class="vote-btns">
+        <button class="vote-btn vote-yes ${myVote==='yes'?'active-yes':''}" onclick="vote(${i},'yes')">✓ Ja (${yesCount})</button>
+        <button class="vote-btn vote-no ${myVote==='no'?'active-no':''}" onclick="vote(${i},'no')">✕ Nein (${noCount})</button>
+      </div>
+    `;
+    list.appendChild(el);
+  });
+}
+
+function vote(idx, answer) {
+  const user = sessionStorage.getItem('dashboard_user') || 'Gast';
+  const sortedEvents = [...events].sort((a,b) => a.date.localeCompare(b.date));
+  const ev = sortedEvents[idx];
+  const realIdx = events.findIndex(e => e.date === ev.date && e.title === ev.title);
+  if (!events[realIdx].votes) events[realIdx].votes = {};
+  if (events[realIdx].votes[user] === answer) {
+    delete events[realIdx].votes[user]; // Toggle off
+  } else {
+    events[realIdx].votes[user] = answer;
+  }
+  saveEvents();
+  renderEventsList();
+}
+
+function toggleNewEventForm() {
+  const form = document.getElementById('new-event-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveEvent() {
+  const title = document.getElementById('ev-title').value.trim();
+  const date = document.getElementById('ev-date').value;
+  const desc = document.getElementById('ev-desc').value.trim();
+  if (!title || !date) {
+    alert('Bitte Titel und Datum eingeben!');
+    return;
+  }
+  events.push({ title, date, desc, votes: {} });
+  saveEvents();
+  document.getElementById('ev-title').value = '';
+  document.getElementById('ev-date').value = '';
+  document.getElementById('ev-desc').value = '';
+  document.getElementById('new-event-form').style.display = 'none';
+  renderCal();
+}
+
+function deleteEvent(i) {
+  const sorted = [...events].sort((a,b) => a.date.localeCompare(b.date));
+  const ev = sorted[i];
+  const realIdx = events.findIndex(e => e.date === ev.date && e.title === ev.title);
+  if (confirm(`"${events[realIdx].title}" löschen?`)) {
+    events.splice(realIdx, 1);
+    saveEvents();
+    renderCal();
+  }
+}
+
+// ═══════════════════════════════════════
+// NACHRICHTEN
+// ═══════════════════════════════════════
+let currentRegion = 'arnsberg';
+
+const RSS_FEEDS = {
+  arnsberg: [
+    { url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www.wp.de/staedte/arnsberg/rss.xml', source: 'WP Arnsberg' },
+    { url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www.derwesten.de/staedte/arnsberg/rss.xml', source: 'Der Westen' },
+  ],
+  sundern: [
+    { url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www.wp.de/staedte/sundern/rss.xml', source: 'WP Sundern' },
+  ],
+  sauerland: [
+    { url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www.wp.de/staedte/sauerland/rss.xml', source: 'WP Sauerland' },
+    { url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www.sauerlandkurier.de/feed/', source: 'Sauerland Kurier' },
+  ],
+  nrw: [
+    { url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www1.wdr.de/nachrichten/nachrichten-nrw-100~_format-rss.xml', source: 'WDR NRW' },
+  ]
+};
+
+function switchRegion(region, el) {
+  currentRegion = region;
+  document.querySelectorAll('.region-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  loadNews(region);
+}
+
+async function loadNews(region) {
+  const list = document.getElementById('news-list');
+  list.innerHTML = '<div class="news-loading">⏳ Laden...</div>';
+  const feeds = RSS_FEEDS[region] || RSS_FEEDS.arnsberg;
+  let allItems = [];
+
+  for (const feed of feeds) {
+    try {
+      const res = await fetch(feed.url);
+      const data = await res.json();
+      if (data.items) {
+        data.items.slice(0, 5).forEach(item => {
+          allItems.push({ title: item.title, link: item.link, date: item.pubDate ? new Date(item.pubDate) : new Date(), source: feed.source });
+        });
+      }
+    } catch(e) {}
+  }
+
+  allItems.sort((a,b) => b.date - a.date);
+  allItems = allItems.slice(0, 5);
+
+  if (allItems.length === 0) {
+    list.innerHTML = `<div class="news-loading">😕 Keine Nachrichten geladen.</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+        <a href="https://www.wp.de/staedte/arnsberg/" target="_blank" rel="noopener" class="news-item"><div class="news-dot"></div><div class="news-content"><div class="news-title">WP Arnsberg öffnen</div><div class="news-meta"><span class="news-source">wp.de</span></div></div></a>
+        <a href="https://www.wp.de/staedte/sundern/" target="_blank" rel="noopener" class="news-item"><div class="news-dot"></div><div class="news-content"><div class="news-title">WP Sundern öffnen</div><div class="news-meta"><span class="news-source">wp.de</span></div></div></a>
+        <a href="https://www1.wdr.de/nachrichten/" target="_blank" rel="noopener" class="news-item"><div class="news-dot"></div><div class="news-content"><div class="news-title">WDR NRW Nachrichten öffnen</div><div class="news-meta"><span class="news-source">wdr.de</span></div></div></a>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  allItems.forEach(item => {
+    const el = document.createElement('a');
+    el.className = 'news-item'; el.href = item.link; el.target = '_blank'; el.rel = 'noopener';
+    el.innerHTML = `<div class="news-dot"></div><div class="news-content"><div class="news-title">${item.title}</div><div class="news-meta"><span class="news-source">${item.source}</span><span>${timeAgo(item.date)}</span></div></div>`;
+    list.appendChild(el);
+  });
+}
+
+function timeAgo(date) {
+  const diff = Math.floor((new Date() - date) / 60000);
+  if (diff < 1) return 'Gerade eben';
+  if (diff < 60) return `vor ${diff} Min.`;
+  if (diff < 1440) return `vor ${Math.floor(diff/60)} Std.`;
+  return `vor ${Math.floor(diff/1440)} Tag(en)`;
+}
+
+renderCal();
 </script>
 </body>
 </html>
